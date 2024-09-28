@@ -1,67 +1,62 @@
-/* eslint-disable react/prop-types */
-import { Button } from "@nextui-org/button";
 import {
   Modal,
-  ModalBody,
   ModalContent,
-  ModalFooter,
   ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
   useDisclosure,
-} from "@nextui-org/modal";
-import ShamsiAndMiladiBirthDate from "./shamsiAndMiladiBirthDate";
-import { Result } from "postcss";
-import NextBirthDayResult from "./nextBirthDayResult";
+} from "@nextui-org/react";
 
-export default function Test({
-  age,
-  nextBirthday,
-  miladi,
-  shamsi,
-  handleManualInput,
-}) {
-  const year = Number(miladi?._i.slice(0, 4)) + 1;
-  const month = miladi?._i.slice(6, 7);
-  const day = miladi?._i.slice(9, 10);
-
-  const shamsiYear = Number(shamsi?.slice(0, 4)) + 1;
-  const shamsiMonth = shamsi?.slice(6, 7);
-  const shamsiDay = shamsi?.slice(9, 10);
-
+export default function App({ dispatch }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
+  function close() {
+    dispatch({ type: "SET_IS_MODAL", payload: false });
+    dispatch({ type: "SET_IS_CALCULATED", payload: false });
+  }
   return (
     <>
-      <Button onPress={onOpen} onClick={handleManualInput}>
-        Open Modal
-      </Button>
-      <Modal isOpen={isOpen}>
+      {/* <Button onPress={onOpen}>Open Modal</Button> */}
+      <Modal isOpen={true} onOpenChange={close}>
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="w-full flex flex-col items-center gap-1 bg-violet-400">
-                سن شما مطابق تقویم شمسی
+              <ModalHeader className="flex flex-col gap-1">
+                Modal Title
               </ModalHeader>
-              {age &
-              (
-                <ModalBody>
-                  {age && <Result age={age} />}
-                  {nextBirthday && (
-                    <NextBirthDayResult nextBirthday={nextBirthday} />
-                  )}
-                  {age && nextBirthday && (
-                    <ShamsiAndMiladiBirthDate
-                      shamsi={manualBirthDate}
-                      miladi={birthDate}
-                    />
-                  )}
-                </ModalBody>
-              )}
+              <ModalBody>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Nullam pulvinar risus non risus hendrerit venenatis.
+                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
+                </p>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Nullam pulvinar risus non risus hendrerit venenatis.
+                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
+                </p>
+                <p>
+                  Magna exercitation reprehenderit magna aute tempor cupidatat
+                  consequat elit dolor adipisicing. Mollit dolor eiusmod sunt ex
+                  incididunt cillum quis. Velit duis sit officia eiusmod Lorem
+                  aliqua enim laboris do dolor eiusmod. Et mollit incididunt
+                  nisi consectetur esse laborum eiusmod pariatur proident Lorem
+                  eiusmod et. Culpa deserunt nostrud ad veniam.
+                </p>
+              </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
+                <Button
+                  color="danger"
+                  variant="light"
+                  onClick={() => {
+                    dispatch({ type: "SET_IS_MODAL", payload: false });
+                  }}
+                  onPress={onClose}
+                >
                   Close
                 </Button>
                 <Button color="primary" onPress={onClose}>
-                  Confirm
+                  Action
                 </Button>
               </ModalFooter>
             </>

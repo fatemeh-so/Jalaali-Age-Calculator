@@ -9,13 +9,14 @@ import Input from "./componets/input";
 import NextBirthDayResult from "./componets/nextBirthDayResult";
 import ShamsiAndMiladiBirthDate from "./componets/shamsiAndMiladiBirthDate";
 import toast, { Toaster } from "react-hot-toast";
-// import Test from "./componets/test";
+import Test from "./componets/test";
 
 // Define initial state
 const initialState = {
   birthDate: null,
   manualBirthDate: "",
   isCalculated: false,
+  IsModal: false,
 };
 
 // Define reducer function
@@ -36,6 +37,11 @@ function reducer(state, action) {
         ...state,
         isCalculated: action.payload,
       };
+    case "SET_IS_MODAL":
+      return {
+        ...state,
+        IsModal: action.payload,
+      };
     default:
       return state;
   }
@@ -44,36 +50,42 @@ function reducer(state, action) {
 function App() {
   const date = new Date();
 
-  // UseReducer instead of useState
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { birthDate, manualBirthDate, isCalculated } = state;
+  const { birthDate, manualBirthDate, isCalculated, IsModal } = state;
 
   // calculateAge function
   const { age, calculateAge, nextBirthday } = CalculateAge();
 
-  console.log("next", birthDate);
-
   // change input when datePicker change
   const handleManualInput = () => {
     const parsedDate = moment(manualBirthDate, "jYYYY/jMM/jDD", true);
+    // if userDataPicker more than now.Date then send error
+    if (parsedDate.n >= date) {
+      dispatch({ type: "SET_IS_CALCULATED", payload: false });
+      toast("تاریخ صحیح را وارد کنید");
+      return null;
+    } // if userDataPicker more than now.Date then send error
+    if (birthDate >= date) {
+      dispatch({ type: "SET_IS_CALCULATED", payload: false });
+      toast("تاریخ صحیح را وارد کنید");
+      return null;
+    }
+   // if userDataPicker is toady then send error
 
-    if (parsedDate > date) {
-      dispatch({ type: "SET_IS_CALCULATED", payload: false });
-      toast("تاریخ صحیح را وارد کنید");
-      return null;
+    if (moment().isSame(parsedDate, "day")) {
+      toast("تاریخ انتخاب شده امروز است!");
+      return; // Exit early if today
     }
-    if (birthDate > date) {
-      dispatch({ type: "SET_IS_CALCULATED", payload: false });
-      toast("تاریخ صحیح را وارد کنید");
-      return null;
-    }
+
     dispatch({ type: "SET_IS_CALCULATED", payload: true });
     if (manualBirthDate) {
       const validDate = parsedDate.isValid();
 
       if (validDate) {
         dispatch({ type: "SET_BIRTH_DATE", payload: parsedDate });
+        dispatch({ type: "SET_IS_MODAL", payload: true });
+
         calculateAge(parsedDate.toDate());
       } else {
         alert("لطفاً تاریخ را در فرمت صحیح وارد کنید: xxxx/xx/xx");
@@ -87,7 +99,6 @@ function App() {
       type: "SET_MANUAL_BIRTH_DATE",
       payload: date.format("jYYYY/jMM/jDD"),
     });
-    console.log("next", birthDate);
   };
 
   useEffect(() => {
@@ -100,7 +111,10 @@ function App() {
   }, [date, isCalculated]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full w-full  mt-[2rem]">
+    <div
+      dir="rtl"
+      className="bg-black flex flex-col items-center justify-center h-full w-full  mt-[2rem]"
+    >
       <h1 className="text-3xl font-semibold py-6">محاسبه سن</h1>
 
       {/* DatePicker */}
@@ -129,6 +143,7 @@ function App() {
           />
         )}
       </div>
+      {/* {IsModal && <Test handleManualInput={handleManualInput} dispatch={dispatch} />} */}
 
       <Toaster
         position="bottom-left"
