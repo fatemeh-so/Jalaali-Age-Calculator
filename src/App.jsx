@@ -59,6 +59,7 @@ function App() {
   // change input when datePicker change
   const handleManualInput = () => {
     const parsedDate = moment(manualBirthDate, "jYYYY/jMM/jDD", true);
+    console.log("jjj", parsedDate);
     // if userDataPicker is null then send error
     if (!parsedDate.isValid()) {
       dispatch({ type: "SET_IS_CALCULATED", payload: false });
@@ -128,6 +129,7 @@ function App() {
 
       {/* DatePicker */}
       <div className="w-full h-full  flex flex-col items-center justify-center gap-6 py-12">
+        
         <DatePicker
           className="bg-blue-200 border border-blue-400 rounded-md shadow-md px-4 py-2"
           value={birthDate}
@@ -185,6 +187,7 @@ function App() {
             color: "#0b225f",
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
             border: "1px solid #ee1cee",
+          
           },
         }}
       />
