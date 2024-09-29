@@ -4,73 +4,89 @@
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   /* line-height: 1.5; */
-  margin-top: 30px;
-
+  /* margin-top: 30px; */
+  height: 100%;
+  font-weight: 400;
 }
 
-
-.app {
+.panel-jalaali {
+  font-family: IRANSansRegular;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  width: 100%;
+  width: 300px;
+  height: 352px;
+  max-height: 352px;
+  background-color: rgb(225, 237, 247) !important;
+  border-radius: 20px !important;
+  overflow: hidden;
   flex-direction: column;
-  margin-top: 20px;
-  background-color: #b83f3f !important;
+  direction: rtl;
 }
-
-.calculate-button {
-  background-color: rgb(34, 177, 248);
-  color: white;
-  border-radius: 10px;
-  padding: 12px 15px;
-  margin-top: 20px;
-  cursor: pointer;
-  border: none;
-  font-size: 18px;
-  font-weight: semibold;
-}
-
-.result {
-  margin-top: px;
+.panel-header-rtl {
+  flex: 1;
   display: flex;
+  border-radius: 20px !important;
+  align-items: center;
+  flex-direction: column;
   justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-fade);
+  background-color: var(--background);
+  direction: rtl;
+  padding-inline: 12px;
+}
+.panel-footer-rtl {
+  width: 100%;
+  min-height: 40px;
+  border-radius: 20px !important;
+  display: flex;
   align-items: center;
   flex-direction: row;
-  /* gap: 6px; */
-}
-
-.input-container {
-  margin-top: 20px;
-  width: 100%;
-  max-width: 300px;
-  display: flex;
-  flex-direction: column;
-  font-size: 18px;
-  align-items: center;
   justify-content: center;
-  justify-items: center;
-  gap: 10px;
-  /* background-color: #747bff; */
+  border-top: 1px solid var(--border-fade);
+  background-color: rgb(225, 237, 247) !important;
+  direction: rtl;
 }
-
-.input {
-  padding: 10px;
-  max-width: 300px;
-
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  color: #333;
-  outline: none;
-  transition: border-color 0.3s ease;
-  background-color: #fff;
+.days-body {
+  border-radius: 10px !important;
+  display: grid;
+  height: 100%;
+  width: 100%;
+  margin-block: 4px;
+  grid-template-columns: repeat(7, minmax(38px, 38px));
+  grid-template-rows: auto;
+  overflow: hidden;
+  background-color: rgb(225, 237, 247) !important;
 }
-
-.input:focus {
-  border-color: #007bff; /* تغییر رنگ حاشیه هنگام فوکوس */
+.day-label-bar-inner-rtl {
+  margin-inline: 0px !important;
+  width: 100%;
+  min-height: 35px !important;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: rgb(117, 177, 230) !important;
+  border-radius: 15px !important;
+  padding-inline: 6px !important;
+  /* padding-top: 6px ; */
+  direction: rtl;
 }
-h1 {
-  text-align: center;
+.day {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  border-radius: 5px !important;
+  color: var(--text);
 }
