@@ -130,7 +130,7 @@ export default function ResultModal({
                       </div>
                     ) : (
                       <span className="text-2xl font-bold text-indigo-600 px-2">
-                        امروز تولد شماست 🥳
+                        در حال محاسبه ...
                       </span>
                     )}
                   </div>
