@@ -9,16 +9,16 @@ function CalculateAge() {
 
   const calculateAge = (date) => {
     const now = new DateObject({ calendar: persian });
-    console.log("bhbh", date);
+    console.log("bhbh", date, now.format());
     // اگر تاریخ ورودی جلالی است
     const birth = new DateObject(date, { calendar: persian });
-    console.log("birth", birth.day, now.day, now.day - birth.day);
-    let years = Math.abs(now.year - birth.year);
-    let months = Math.abs(now.month - birth.month);
-    let days = Math.abs(now.day - birth.day);
-    let hours = Math.abs(now.hour - birth.hour);
-    let minutes = Math.abs(now.minute - birth.minute);
-    let seconds = Math.abs(now.second - birth.second);
+console.log("birth", birth.day,now.day,now.day - birth.day); 
+    let years = now.year - birth.year;
+    let months = now.month - birth.month;
+    let days = Math.abs(now.day - birth.day)
+    let hours = now.hour - birth.hour;
+    let minutes = now.minute - birth.minute;
+    let seconds = now.second - birth.second;
 
     if (days < 0) {
       months--;
