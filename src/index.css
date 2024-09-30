@@ -9,84 +9,23 @@
   font-weight: 400;
 }
 
-.panel-jalaali {
-  font-family: IRANSansRegular;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 300px;
-  height: 352px;
-  max-height: 352px;
-  background-color: rgb(225, 237, 247) !important;
-  border-radius: 20px !important;
-  overflow: hidden;
-  flex-direction: column;
-  direction: rtl;
-}
-.panel-header-rtl {
-  flex: 1;
-  display: flex;
-  border-radius: 20px !important;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-  overflow: hidden;
-  border-bottom: 1px solid var(--border-fade);
-  background-color: var(--background);
-  direction: rtl;
-  padding-inline: 12px;
-}
-.panel-footer-rtl {
-  width: 100%;
-  min-height: 40px;
-  border-radius: 20px !important;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: center;
-  border-top: 1px solid var(--border-fade);
-  background-color: rgb(225, 237, 247) !important;
-  direction: rtl;
-}
-.days-body {
-  border-radius: 10px !important;
-  display: grid;
-  height: 100%;
-  width: 100%;
-  margin-block: 4px;
-  grid-template-columns: repeat(7, minmax(38px, 38px));
-  grid-template-rows: auto;
-  overflow: hidden;
-  background-color: rgb(225, 237, 247) !important;
-}
-.day-label-bar-inner-rtl {
-  margin-inline: 0px !important;
-  width: 100%;
-  min-height: 35px !important;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: space-between;
-  background-color: rgb(117, 177, 230) !important;
+.rmdp-input {
+  border: 1px solid #41c2f9 !important;
+  background-color: #d8ebf8 !important;
   border-radius: 15px !important;
-  padding-inline: 6px !important;
-  /* padding-top: 6px ; */
-  direction: rtl;
+  height: 64px !important;
+  max-width: 400px !important;
+  margin: 1px 0;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 2px 5px;
+  text-align: center;
 }
-.day {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: pointer;
-  border-radius: 5px !important;
-  color: var(--text);
+.rmdp-wrapper {
+  background-color: #fff;
+  border-radius: 5px;
+  direction: ltr;
+  text-align: center;
+
+
 }

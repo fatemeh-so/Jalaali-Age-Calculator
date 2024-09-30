@@ -1,51 +1,58 @@
-import { useState, useEffect } from "react";
-
+import { useState } from "react";
+import moment from "moment-jalaali";
+import DateObject from "react-date-object";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
 function CalculateAge() {
   const [age, setAge] = useState(null);
   const [nextBirthday, setNextBirthday] = useState(null);
-  
-  const now = new Date();
 
-  const year = 1000 * 60 * 60 * 24 * 365.25;
-  const month = 1000 * 60 * 60 * 24 * 30.44;
-  const day = 1000 * 60 * 60 * 24;
-  const hour = 1000 * 60 * 60;
-  const minute = 1000 * 60;
+  const calculateAge = (date) => {
+    const now = new DateObject({ calendar: persian });
+    console.log("bhbh", date);
+    // اگر تاریخ ورودی جلالی است
+    const birth = new DateObject(date, { calendar: persian });
+    console.log("birth", birth.day, now.day, now.day - birth.day);
+    let years = Math.abs(now.year - birth.year);
+    let months = Math.abs(now.month - birth.month);
+    let days = Math.abs(now.day - birth.day);
+    let hours = Math.abs(now.hour - birth.hour);
+    let minutes = Math.abs(now.minute - birth.minute);
+    let seconds = Math.abs(now.second - birth.second);
 
-
-  useEffect(() => {
-
-    
-  }, []);
-
-  const calculateAge = (birth) => {
-    const nextBirthdayDate = new Date(
-      now.getFullYear(),
-      birth.getMonth(),
-      birth.getDate()
-    );
-
-    // اگر تولد امسال گذشته باشد، سال بعد را در نظر بگیرید
-    if (nextBirthdayDate < now) {
-      nextBirthdayDate.setFullYear(nextBirthdayDate.getFullYear() + 1);
+    if (days < 0) {
+      months--;
+      const lastMonth = new DateObject(birth.year, birth.month - 1, 1, {
+        calendar: persian,
+      });
+      days += lastMonth.daysInMonth;
+    }
+    if (months < 0) {
+      years--;
+      months += 12;
     }
 
-    const diff = now - birth;
+    const nextBirthdayDate = new DateObject({
+      year: now.year + 1,
+      month: birth.month,
+      day: birth.day,
+      calendar: persian,
+    });
+    const next = new DateObject(nextBirthdayDate, { calendar: persian });
 
-    const years = Math.floor(diff / year);
-    const months = Math.floor((diff % year) / month);
-    const days = Math.floor((diff % month) / day);
-    const hours = Math.floor((diff % day) / hour);
-    const minutes = Math.floor((diff % hour) / minute);
-    const seconds = Math.floor((diff % minute) / 1000);
-
-    // محاسبه فاصله تا تاریخ تولد بعدی
-    const nextDiff = nextBirthdayDate - now;
-    const nextMonths = Math.floor((nextDiff % year) / month);
-    const nextDays = Math.floor((nextDiff % month) / day);
-    const nextHours = Math.floor((nextDiff % day) / hour);
-    const nextMinutes = Math.floor((nextDiff % hour) / minute);
-    const nextSeconds = Math.floor((nextDiff % minute) / 1000);
+    let nextMonths = months == 0 ? 11 : months - 12;
+    let nextDays =
+      (months == 1) |
+      (months == 2) |
+      (months == 3) |
+      (months == 4) |
+      (months == 5) |
+      (months == 6)
+        ? days - 31
+        : days - 30;
+    let nextHours = hours - 24;
+    let nextMinutes = minutes - 60;
+    let nextSeconds = seconds - 60;
 
     setAge({ years, months, days, hours, minutes, seconds });
     setNextBirthday({
@@ -55,6 +62,7 @@ function CalculateAge() {
       nextMinutes,
       nextSeconds,
     });
+    console.log(nextBirthday);
   };
 
   return {
@@ -64,4 +72,5 @@ function CalculateAge() {
     nextBirthday,
   };
 }
+
 export default CalculateAge;

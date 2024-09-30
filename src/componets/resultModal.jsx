@@ -7,15 +7,31 @@ import {
   ModalFooter,
   Button,
 } from "@nextui-org/react";
+import DateObject from "react-date-object";
+import persian from "react-date-object/calendars/persian";
+import persian_fa from "react-date-object/locales/persian_fa";
+// import persian from "react-date-object/calendars/persian";
 
-export default function App({ dispatch, age, shamsi, miladi, nextBirthday }) {
-  const year = Number(miladi._i.slice(0, 4)) + 1;
-  const month = miladi._i.slice(6, 7);
-  const day = miladi._i.slice(9, 10);
+export default function ResultModal({
+  dispatch,
+  age,
+  nextBirthday,
+  momentDate,
+  now,
+  convertedDate,
+}) {
+  const persianNextYear = new DateObject({
+    date: momentDate?.toDate(),
+    calendar: persian,
+    locale: persian_fa,
+  })
+    .add(age?.years + 1, "years")
+    .convert(persian)
+    .format();
 
-  const shamsiYear = Number(shamsi.slice(0, 4)) + 1;
-  const shamsiMonth = shamsi.slice(6, 7);
-  const shamsiDay = shamsi.slice(9, 10);
+  const miladiNextYear = new DateObject(momentDate?.toDate())
+    .add(age?.years + 1, "years")
+    .format();
 
   function close() {
     dispatch({ type: "SET_IS_MODAL", payload: false });
@@ -26,9 +42,16 @@ export default function App({ dispatch, age, shamsi, miladi, nextBirthday }) {
 
     return n?.toString()?.replace(/\d/g, (x) => farsiDigits[x]);
   }
+
   return (
     <>
-      <Modal dir="rtl" size="xl" isOpen={true} onOpenChange={close}>
+      <Modal
+        dir="rtl"
+        size="xl "
+        className="md:max-h-full max-h-[90%] "
+        isOpen={true}
+        onOpenChange={close}
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -42,30 +65,30 @@ export default function App({ dispatch, age, shamsi, miladi, nextBirthday }) {
                   {age && (
                     <div className="pb-6">
                       <div className="text-2xl py-4 font-bold">
-                        <span className="text-5xl text-indigo-600 px-2">
-                          {toFarsiNumber(age.years)}
+                        <span className="text-4xl text-indigo-600 px-2">
+                          {age.years}
                         </span>
                         سال و
-                        <span className="text-5xl text-indigo-600 px-2">
-                          {toFarsiNumber(age.months)}
+                        <span className="text-4xl text-indigo-600 px-2">
+                          {age.months}
                         </span>
                         ماه
                       </div>
                       <div className="text-xl text-gray-700">
                         <span className="text-3xl text-indigo-600 px-2">
-                          {toFarsiNumber(age.days)}
+                          {age.days}
                         </span>
                         روز و
                         <span className="text-3xl text-indigo-600 px-2">
-                          {toFarsiNumber(age.hours)}
+                          {age.hours}
                         </span>
                         ساعت و
                         <span className="text-3xl text-indigo-600 px-2">
-                          {toFarsiNumber(age.minutes)}
+                          {age.minutes}
                         </span>
                         دقیقه و
                         <span className="text-3xl text-indigo-600 px-2">
-                          {toFarsiNumber(age.seconds)}
+                          {age.seconds}
                         </span>
                         ثانیه
                       </div>
@@ -74,36 +97,41 @@ export default function App({ dispatch, age, shamsi, miladi, nextBirthday }) {
 
                   {/* Next Birthday Countdown */}
                   <h2 className="text-xl w-full text-center font-bold text-pink-500 border-b-2 border-pink-100 py-4">
-                    زمان باقی مانده تا تولد بعدی شما
+                    زمان باقی مانده تا تولد شما
                   </h2>
                   <div>
-                    {nextBirthday && (
+                    {!nextBirthday?.nextMonths == "0" &&
+                    !nextBirthday?.nextDays == "0 " ? (
                       <div className="pb-6">
-                        <span className="text-3xl font-bold text-indigo-600 px-2">
-                          {toFarsiNumber(nextBirthday?.nextYears)}
+                        {/* <span className="text-3xl font-bold text-indigo-600 px-2">
+                          {toFarsiNumber(nextBirthday?.nextYears)==="0"||null?"0":}
                         </span>
-                        سال و
+                        سال و */}
                         <span className="text-3xl font-bold text-indigo-600 px-2">
-                          {toFarsiNumber(nextBirthday?.nextMonths)}
+                          {toFarsiNumber(Math.abs(nextBirthday?.nextMonths))}
                         </span>
                         ماه
                         <span className="text-3xl font-bold text-indigo-600 px-2">
-                          {toFarsiNumber(nextBirthday?.nextDays)}
+                          {toFarsiNumber(Math.abs(nextBirthday?.nextDays))}
                         </span>
                         روز و
                         <span className="text-3xl font-bold text-indigo-600 px-2">
-                          {toFarsiNumber(nextBirthday?.nextHours)}
+                          {toFarsiNumber(Math.abs(nextBirthday?.nextHours))}
                         </span>
                         ساعت و
                         <span className="text-3xl font-bold text-indigo-600 px-2">
-                          {toFarsiNumber(nextBirthday?.nextMinutes)}
+                          {toFarsiNumber(Math.abs(nextBirthday?.nextMinutes))}
                         </span>
                         دقیقه و
                         <span className="text-3xl font-bold text-indigo-600 px-2">
-                          {toFarsiNumber(nextBirthday?.nextSeconds)}
+                          {toFarsiNumber(Math.abs(nextBirthday?.nextSeconds))}
                         </span>
                         ثانیه
                       </div>
+                    ) : (
+                      <span className="text-2xl font-bold text-indigo-600 px-2">
+                        امروز تولد شماست 🥳
+                      </span>
                     )}
                   </div>
 
@@ -112,18 +140,16 @@ export default function App({ dispatch, age, shamsi, miladi, nextBirthday }) {
                     <h3 className="text-xl font-bold">
                       تولد بعدی شما به شمسی :
                     </h3>
-                    <h4 className="text-indigo-700 font-bold text-2xl">{`${toFarsiNumber(
-                      shamsiYear
-                    )} / ${toFarsiNumber(shamsiMonth)} / ${toFarsiNumber(
-                      shamsiDay
-                    )}`}</h4>
+                    <h4 className="text-indigo-700 font-bold text-2xl">
+                      {persianNextYear}
+                    </h4>
 
                     <h3 className="text-xl font-bold">
                       تولد بعدی شما به میلادی :
                     </h3>
-                    <h4 className="text-indigo-700 font-bold text-2xl">{`${toFarsiNumber(
-                      year
-                    )} / ${toFarsiNumber(month)} / ${toFarsiNumber(day)}`}</h4>
+                    <h4 className="text-indigo-700 font-bold text-2xl">
+                      {toFarsiNumber(miladiNextYear)}
+                    </h4>
                   </div>
                 </div>
               </ModalBody>

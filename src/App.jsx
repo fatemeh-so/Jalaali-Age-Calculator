@@ -1,14 +1,15 @@
 import "./index.css";
 import "jalaali-react-date-picker/lib/styles/index.css";
-import { DatePicker } from "jalaali-react-date-picker";
-import { useReducer, useEffect } from "react";
+import { useReducer, useEffect, useState } from "react";
 import moment from "moment-jalaali";
 import CalculateAge from "./logic/caculateAge";
-import MyInput from "./componets/input";
 import toast, { Toaster } from "react-hot-toast";
-import Test from "./componets/test";
 import { Button } from "@nextui-org/button";
-import { InputDatePicker } from "jalaali-react-date-picker";
+import DatePicker from "react-multi-date-picker";
+import persian from "react-date-object/calendars/persian"; // تقویم شمسی
+import persian_fa from "react-date-object/locales/persian_fa"; // زبان فارسی
+import ResultModal from "./componets/resultModal";
+import DateObject from "react-date-object";
 
 // Define initial state
 const initialState = {
@@ -16,6 +17,7 @@ const initialState = {
   manualBirthDate: "",
   isCalculated: false,
   IsModal: false,
+  momentDate: null,
 };
 
 // Define reducer function
@@ -25,11 +27,6 @@ function reducer(state, action) {
       return {
         ...state,
         birthDate: action.payload,
-      };
-    case "SET_MANUAL_BIRTH_DATE":
-      return {
-        ...state,
-        manualBirthDate: action.payload,
       };
     case "SET_IS_CALCULATED":
       return {
@@ -41,6 +38,11 @@ function reducer(state, action) {
         ...state,
         IsModal: action.payload,
       };
+    case "SET_MOMENT":
+      return {
+        ...state,
+        momentDate: action.payload,
+      };
     default:
       return state;
   }
@@ -51,71 +53,73 @@ function App() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { birthDate, manualBirthDate, isCalculated, IsModal } = state;
+  const { birthDate, isCalculated, IsModal, momentDate } = state;
 
   // calculateAge function
   const { age, calculateAge, nextBirthday } = CalculateAge();
+  const convertedDate = moment(
+    convertPersianToEnglish(birthDate),
+    "jYYYY/jMM/jDD"
+  ).toDate();
+  const now = new Date();
+  const nowLimit = new DateObject({ date: now, calendar: persian }).format();
 
-  // change input when datePicker change
-  const handleManualInput = () => {
-    const parsedDate = moment(manualBirthDate, "jYYYY/jMM/jDD", true);
-    console.log("jjj", parsedDate);
-    // if userDataPicker is null then send error
-    if (!parsedDate.isValid()) {
+  function convertPersianToEnglish(persianNumber) {
+    const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+    const englishDigits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+    return persianNumber?.replace(
+      /[۰-۹]/g,
+      (digit) => englishDigits[persianDigits?.indexOf(digit)]
+    );
+  }
+
+  const handelCalculateAge = () => {
+    // if userDataPicker more than now.Date then send error
+    if (!birthDate) {
       dispatch({ type: "SET_IS_CALCULATED", payload: false });
       toast("تاریح را وارد کنید");
       return null;
     }
 
-    // if userDataPicker more than now.Date then send error
-    if (parsedDate.n >= date) {
+    // Check if the birth date is in the future
+    if (convertedDate >= now.setHours(0, 0, 0, 0)) {
       dispatch({ type: "SET_IS_CALCULATED", payload: false });
-      toast("تاریخ صحیح را وارد کنید");
-      return null;
-    } // if userDataPicker more than now.Date then send error
-    if (birthDate >= date) {
-      dispatch({ type: "SET_IS_CALCULATED", payload: false });
-      toast("تاریخ صحیح را وارد کنید");
-      return null;
+      toast("تاریخ تولد نمی‌تواند برابر یا پس از امروز باشد");
+      return;
     }
-    // if userDataPicker is toady then send error
 
-    if (moment().isSame(parsedDate, "day")) {
-      toast("تاریخ انتخاب شده امروز است!");
-      return; // Exit early if today
+    if (convertPersianToEnglish(birthDate.slice(0, 4)) < "1300") {
+      dispatch({ type: "SET_IS_CALCULATED", payload: false });
+      toast("تاریخ تولد نمی‌تواند کمتر از سال ۱۳۰۰ باشد");
+      return;
     }
 
     dispatch({ type: "SET_IS_CALCULATED", payload: true });
-    if (manualBirthDate) {
-      const validDate = parsedDate.isValid();
-
-      if (validDate) {
-        dispatch({ type: "SET_BIRTH_DATE", payload: parsedDate });
-        dispatch({ type: "SET_IS_MODAL", payload: true });
-
-        calculateAge(parsedDate.toDate());
-      } else {
-        alert("لطفاً تاریخ را در فرمت صحیح وارد کنید: xxxx/xx/xx");
-      }
-    }
+    dispatch({ type: "SET_IS_MODAL", payload: true });
+    calculateAge(convertPersianToEnglish(birthDate));
   };
 
   const handleDatePickerChange = (date) => {
-    console.log(date);
-    dispatch({ type: "SET_BIRTH_DATE", payload: date });
     dispatch({
-      type: "SET_MANUAL_BIRTH_DATE",
-      payload: date.format("jYYYY/jMM/jDD"),
+      type: "SET_BIRTH_DATE",
+      payload: convertPersianToEnglish(date?.format()),
     });
+    dispatch({
+      type: "SET_MOMENT",
+      payload: date,
+    });
+    console.log("dhdhujhd", convertPersianToEnglish(birthDate));
+    // console.log();
   };
 
   useEffect(() => {
     // Call calculateAge every second
     const interval = setInterval(() => {
-      if (isCalculated) handleManualInput();
+      if (isCalculated) handelCalculateAge();
     }, 1000);
 
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval);
   }, [date, isCalculated]);
 
   return (
@@ -129,39 +133,38 @@ function App() {
 
       {/* DatePicker */}
       <div className="w-full h-full  flex flex-col items-center justify-center gap-6 py-12">
-        
+        <p className="text-center text-2xl font-bold">
+          تاریخ تولدتان را وارد کنید
+        </p>
         <DatePicker
-          className="bg-blue-200 border border-blue-400 rounded-md shadow-md px-4 py-2"
+          className="w-full max-w-[30rem] text-center text-4xl font-bold py-6 border-b-4 border-blue-400"
+          calendar={persian}
+          locale={persian_fa}
           value={birthDate}
           onChange={handleDatePickerChange}
+          minDate="1300/9/18"
+          maxDate={convertPersianToEnglish(nowLimit)}
+          placeholderText="تاریح را وارد کنید"
         />
-        {/* <InputDatePicker /> */}
-        {/* Input */}
-        <MyInput
-          manualBirthDate={manualBirthDate}
-          dispatch={dispatch}
-          setManualBirthDate={(val) => {
-            dispatch({ type: "SET_MANUAL_BIRTH_DATE", payload: val });
-          }}
-        />
-
         <Button
           color="primary"
-          onClick={handleManualInput}
-          className="bg-gradient-to-r from-pink-500 to-red-400 hover:bg-blue-700 text-white font-semibold rounded-lg px-6 py-3 transition-all duration-300 transform hover:scale-105 shadow-lg"
+          size="lg"
+          onClick={handelCalculateAge}
+          className="bg-gradient-to-r from-pink-500 to-red-400 hover:bg-blue-700 text-white text-lg font-semibold rounded-lg px-6 py-3 transition-all duration-300 transform hover:scale-105 shadow-lg"
         >
           محاسبه سن
         </Button>
       </div>
 
       {IsModal && (
-        <Test
-          handleManualInput={handleManualInput}
+        <ResultModal
+          handelCalculateAge={handelCalculateAge}
           dispatch={dispatch}
           age={age}
           nextBirthday={nextBirthday}
-          shamsi={manualBirthDate}
-          miladi={birthDate}
+          momentDate={momentDate}
+          convertedDate={convertedDate}
+          now={now}
         />
       )}
 
@@ -187,7 +190,6 @@ function App() {
             color: "#0b225f",
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
             border: "1px solid #ee1cee",
-          
           },
         }}
       />
