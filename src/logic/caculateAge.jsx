@@ -1,26 +1,49 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import moment from "moment-jalaali";
+
+// تعریف اکشن‌ها
+const AGE_ACTIONS = {
+  SET_AGE: "SET_AGE",
+  SET_NEXT_BIRTHDAY: "SET_NEXT_BIRTHDAY",
+};
+
+// تابع ریدوسر
+function ageReducer(state, action) {
+  switch (action.type) {
+    case AGE_ACTIONS.SET_AGE:
+      return { ...state, age: action.payload };
+    case AGE_ACTIONS.SET_NEXT_BIRTHDAY:
+      return { ...state, nextBirthday: action.payload };
+    default:
+      return state;
+  }
+}
+
 function CalculateAge() {
-  const [age, setAge] = useState(null);
-  const [nextBirthday, setNextBirthday] = useState(null);
+  // استفاده از useReducer به جای useState
+  const [state, dispatch] = useReducer(ageReducer, {
+    age: null,
+    nextBirthday: null,
+  });
 
   const calculateAge = (date) => {
-    var currentDateTime = moment();
-    var bithrDate = moment(date, "jYYYY-jMM-jDD HH:mm:ss");
-    var duration = moment.duration(currentDateTime.diff(bithrDate));
+    const currentDateTime = moment(); // تاریخ فعلی
+    const birthDate = moment(date, "jYYYY-jMM-jDD HH:mm:ss"); // تاریخ تولد
+    const duration = moment.duration(currentDateTime.diff(birthDate));
 
-    // console.log("تفاوت:", duration);
+    // تنظیم سن
+    const age = {
+      years: duration?.years(),
+      months: duration?.months(),
+      days: duration?.days(),
+      hours: duration?.hours(),
+      minutes: duration?.minutes(),
+      seconds: duration?.seconds(),
+    };
 
-    setAge({
-      years: duration?._data?.years,
-      months: duration?._data?.months,
-      days: duration?._data?.days,
-      hours: duration?._data?.hours,
-      minutes: duration?._data?.minutes,
-      seconds: duration?._data?.seconds,
-    });
+    dispatch({ type: AGE_ACTIONS.SET_AGE, payload: age });
 
-    // const nextYear = currentDateTime.add(1, "year");
+    // محاسبه تولد سال بعد
     const nextBirthday = moment(date, "jYYYY-jMM-jDD HH:mm:ss").add(
       age.years + 1,
       "year"
@@ -28,21 +51,27 @@ function CalculateAge() {
     const durationNextYear = moment.duration(
       nextBirthday.diff(currentDateTime)
     );
-    console.log("تفاوت:", bithrDate, nextBirthday,durationNextYear);
-    setNextBirthday({
-      nextMonths: durationNextYear?._data?.months,
-      nextDays: durationNextYear?._data?.days,
-      nextHours: durationNextYear?._data?.hours,
-      nextMinutes: durationNextYear?._data?.minutes,
-      nextSeconds: durationNextYear?._data?.seconds,
+
+    const nextBirthdayInfo = {
+      nextMonths: durationNextYear?.months(),
+      nextDays: durationNextYear?.days(),
+      nextHours: durationNextYear?.hours(),
+      nextMinutes: durationNextYear?.minutes(),
+      nextSeconds: durationNextYear?.seconds(),
+    };
+
+    dispatch({
+      type: AGE_ACTIONS.SET_NEXT_BIRTHDAY,
+      payload: nextBirthdayInfo,
     });
-    console.log(nextBirthday);
+
+    console.log("تولد سال بعد:", nextBirthday);
   };
 
   return {
-    age,
+    age: state.age,
+    nextBirthday: state.nextBirthday,
     calculateAge,
-    nextBirthday,
   };
 }
 
