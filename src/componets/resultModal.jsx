@@ -10,15 +10,18 @@ import {
 import DateObject from "react-date-object";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
-// import persian from "react-date-object/calendars/persian";
+
+function toFarsiNumber(n) {
+  const farsiDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+
+  return n?.toString()?.replace(/\d/g, (x) => farsiDigits[x]);
+}
 
 export default function ResultModal({
   dispatch,
   age,
   nextBirthday,
   momentDate,
-  now,
-  convertedDate,
 }) {
   const persianNextYear = new DateObject({
     date: momentDate?.toDate(),
@@ -37,18 +40,13 @@ export default function ResultModal({
     dispatch({ type: "SET_IS_MODAL", payload: false });
     dispatch({ type: "SET_IS_CALCULATED", payload: false });
   }
-  function toFarsiNumber(n) {
-    const farsiDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
-
-    return n?.toString()?.replace(/\d/g, (x) => farsiDigits[x]);
-  }
 
   return (
     <>
       <Modal
         dir="rtl"
-        size="xl "
-        className="md:max-h-full max-h-[90%] "
+        size="xl"
+        className="md:max-h-full  max-h-[90%] "
         isOpen={true}
         onOpenChange={close}
       >
@@ -100,8 +98,7 @@ export default function ResultModal({
                     زمان باقی مانده تا تولد شما
                   </h2>
                   <div>
-                    {!nextBirthday?.nextMonths == "0" &&
-                    !nextBirthday?.nextDays == "0 " ? (
+                    {nextBirthday ? (
                       <div className="pb-6">
                         {/* <span className="text-3xl font-bold text-indigo-600 px-2">
                           {toFarsiNumber(nextBirthday?.nextYears)==="0"||null?"0":}
@@ -137,16 +134,12 @@ export default function ResultModal({
 
                   {/* Next Birthday Dates */}
                   <div className="flex flex-col items-center w-full justify-between gap-6 text-md text-gray-700">
-                    <h3 className="text-xl font-bold">
-                      تولد بعدی شما به شمسی :
-                    </h3>
+                    <h3 className="text-xl font-bold">تولد شما به شمسی :</h3>
                     <h4 className="text-indigo-700 font-bold text-2xl">
                       {persianNextYear}
                     </h4>
 
-                    <h3 className="text-xl font-bold">
-                      تولد بعدی شما به میلادی :
-                    </h3>
+                    <h3 className="text-xl font-bold">تولد شما به میلادی :</h3>
                     <h4 className="text-indigo-700 font-bold text-2xl">
                       {toFarsiNumber(miladiNextYear)}
                     </h4>

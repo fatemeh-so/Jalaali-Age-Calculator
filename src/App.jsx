@@ -1,6 +1,6 @@
 import "./index.css";
 import "jalaali-react-date-picker/lib/styles/index.css";
-import { useReducer, useEffect, useState } from "react";
+import { useReducer, useEffect } from "react";
 import moment from "moment-jalaali";
 import CalculateAge from "./logic/caculateAge";
 import toast, { Toaster } from "react-hot-toast";
@@ -10,6 +10,16 @@ import persian from "react-date-object/calendars/persian"; // تقویم شمس�
 import persian_fa from "react-date-object/locales/persian_fa"; // زبان فارسی
 import ResultModal from "./componets/resultModal";
 import DateObject from "react-date-object";
+
+function convertPersianToEnglish(persianNumber) {
+  const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+  const englishDigits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+  return persianNumber?.replace(
+    /[۰-۹]/g,
+    (digit) => englishDigits[persianDigits?.indexOf(digit)]
+  );
+}
 
 // Define initial state
 const initialState = {
@@ -64,15 +74,7 @@ function App() {
   const now = new Date();
   const nowLimit = new DateObject({ date: now, calendar: persian }).format();
 
-  function convertPersianToEnglish(persianNumber) {
-    const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
-    const englishDigits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-
-    return persianNumber?.replace(
-      /[۰-۹]/g,
-      (digit) => englishDigits[persianDigits?.indexOf(digit)]
-    );
-  }
+ 
 
   const handelCalculateAge = () => {
     // if userDataPicker more than now.Date then send error
